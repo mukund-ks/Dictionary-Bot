@@ -1,8 +1,6 @@
 import telegram.ext as tele
 import requests
 
-app_id="809d4b86"
-app_key="c0c4b9de2d7d3ed86774975bd604ac2a"
 with open("Token.txt", "r") as f:
     Token = f.read()
 
