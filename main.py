@@ -11,7 +11,11 @@ def input(update,context):
     url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word_id.lower()}"
     r = requests.get(url)
     r_dict = r.json()
-    update.message.reply_text("Meaning: "+r_dict[0]["meanings"][0]["definitions"][0]["definition"])
+    try:
+        update.message.reply_text("Meaning: "+r_dict[0]["meanings"][0]["definitions"][0]["definition"])
+    except:
+        update.message.reply_text("Invalid Word. Maybe check your spelling.")
+        return
     try:
         update.message.reply_text("Example: "+r_dict[0]["meanings"][0]["definitions"][0]["example"])
     except:
