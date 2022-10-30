@@ -1,15 +1,42 @@
+import datetime
 import telegram.ext as tele
+from telegram.ext import CallbackContext
 import requests
+import random
 
 with open("Token.txt", "r") as f:
     Token = f.read()
 
 
+def daily(context: CallbackContext):
+    with open("words.txt", "r") as a:
+        word = random.choice(list(a))
+    url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+    request_dict = requests.get(url).json()
+
+    try:
+        example = request_dict[0]["meanings"][0]["definitions"][0]["example"]
+    except:
+        example = "Example not available."
+
+    try:
+        message = (
+            "Word of the Day: "
+            + word
+            + "\nMeaning: "
+            + request_dict[0]["meanings"][0]["definitions"][0]["definition"]
+            + "Example: "
+            + example
+        )
+        context.bot.send_message(text=message)
+    except:
+        context.bot.send_message("An Error Occoured.")
+
+
 def input(update, context):
     word_id = update.message.text
     url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word_id.lower()}"
-    r = requests.get(url)
-    r_dict = r.json()
+    r_dict = requests.get(url).json()
     try:
         update.message.reply_text(
             "Meaning: " + r_dict[0]["meanings"][0]["definitions"][0]["definition"]
@@ -27,7 +54,7 @@ def input(update, context):
 
 def start(update, context):
     update.message.reply_text(
-        "Hi, Welcome to Dictionary Bot!\nEnter a word to learn about its definition and much more."
+        "Hi, Welcome to Dictionary Bot!\n\nEnter a word to get its definition and an example.\nI'll be texting you one random word everyday at 11 AM IST, with its definition and example obviously :)\n\n\nThis bot is a project of - https://github.com/mukund-ks"
     )
 
 
@@ -35,6 +62,11 @@ def main():
     updater = tele.Updater(Token, use_context=True)
     disp = updater.dispatcher
 
+    updater.job_queue.run_daily(
+        daily,
+        days=(0, 1, 2, 3, 4, 5, 6),
+        time=datetime.time(hour=11, minute=00, second=00),
+    )
     disp.add_handler(tele.CommandHandler("start", start))
     disp.add_handler(tele.MessageHandler(tele.Filters.text, input))
 
