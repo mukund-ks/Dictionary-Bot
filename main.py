@@ -1,6 +1,5 @@
 import datetime
-import telegram.ext as tele
-from telegram.ext import CallbackContext
+from telegram.ext import Updater,CommandHandler,MessageHandler,Filters,CallbackContext
 import requests
 import random
 
@@ -59,7 +58,7 @@ def start(update, context):
 
 
 def main():
-    updater = tele.Updater(Token, use_context=True)
+    updater = Updater(Token, use_context=True)
     disp = updater.dispatcher
 
     updater.job_queue.run_daily(
@@ -67,8 +66,8 @@ def main():
         days=(0, 1, 2, 3, 4, 5, 6),
         time=datetime.time(hour=11, minute=00, second=00),
     )
-    disp.add_handler(tele.CommandHandler("start", start))
-    disp.add_handler(tele.MessageHandler(tele.Filters.text, input))
+    disp.add_handler(CommandHandler("start", start))
+    disp.add_handler(MessageHandler(Filters.text, input))
 
     updater.start_polling()
     updater.idle()
