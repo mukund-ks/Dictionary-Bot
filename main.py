@@ -65,7 +65,7 @@ def main():
     updater.job_queue.run_daily(
         daily,
         days=(0, 1, 2, 3, 4, 5, 6),
-        time=datetime.time(hour=20, minute=30, second=00),
+        time=datetime.time(hour=11, minute=00, second=00),
     )
     disp.add_handler(CommandHandler("start", start))
     disp.add_handler(MessageHandler(Filters.text, input))
